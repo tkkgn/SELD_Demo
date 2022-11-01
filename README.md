@@ -82,13 +82,11 @@ Example:
 ```python
 import metrics
 
-task1_metric = metrics.task1_metric(prediction_vector, target_vector)
 _,_,_,task2_metric = metrics.location_sensitive_detection(prediction_vector, target_vector)
 ```
 
 To compute the challenge metrics for our basiline models run:
 ```bash
-python evaluate_baseline_task1.py
 python evaluate_baseline_task2.py
 ```
 
@@ -102,7 +100,6 @@ to the above commands.
 The script **validate_submission.py** can be used to assess the validity of the submission files shape. Instructions about how to format the submission can be found in the L3das [website](https://www.l3das.com/icassp2022/submission.html)
 Use these commands to validate your submissions:
 ```bash
-python validate_submission.py --task 1 --submission_path path/to/task1_submission_folder --test_path path/to/task1_test_dataset_folder
 
 python validate_submission.py --task 2 --submission_path path/to/task2_submission_folder --test_path path/to/task2_test_dataset_folder
 ```
