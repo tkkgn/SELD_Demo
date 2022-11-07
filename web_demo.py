@@ -37,7 +37,7 @@ class Predictor:
             self.device = "cuda:" + str(gpu_id)
         else:
             self.device = "cpu"
-        task2_pretrained_path = "RESULTS/Task2/baseline_task2_checkpoint"
+        task2_pretrained_path = sp.model_path
         self.model_task2 = Seldnet_augmented(
             time_dim=2400,
             freq_dim=256,
