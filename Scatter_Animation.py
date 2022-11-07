@@ -22,7 +22,7 @@ class Animation():
         
         # initializing a figure in 
         # which the graph will be plotted
-        self.fig,self.ax = plt.subplots(figsize=(10,10)) 
+        self.fig,self.ax = plt.subplots(figsize=(20,10)) 
 
 
 
@@ -57,11 +57,11 @@ class Animation():
         self.ax.grid()
         
         #x, y, name, = next(self.stream)
-        self.ax.set_xlim([-0.5,0.5])
+        self.ax.set_xlim([-0.6,0.6])
         self.ax.set_ylim([-0.5,0.5])
         self.ax.scatter(0,0,c='r')
         self.ax.annotate("Mic",(0,0))
-        self.scat = self.ax.scatter([], [], s=100)
+        self.scat = self.ax.scatter([], [], s=200)
         self.__annotations__= self.ax.annotate("",(0,0))
         self.__annotations1__= self.ax.annotate("",(0,0))
         self.__annotations2__= self.ax.annotate("",(0,0))
@@ -109,7 +109,7 @@ class Animation():
         """Update the scatter plot."""
         x,y,name = next(self.stream)
         self.ax.clear()
-        #self.title.set_text("the frame number: {}".format(f))
+        self.ax.set_title("the frame number: {}".format(f))
         self.setup_plot()
         
         
