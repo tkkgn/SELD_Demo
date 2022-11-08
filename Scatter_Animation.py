@@ -19,15 +19,15 @@ class Animation():
         self.name = name
         self.stream = self.data_stream()
         
-        
-        
         # initializing a figure in 
         # which the graph will be plotted
         self.fig,self.ax = plt.subplots(figsize=(20,15)) 
         self.background = plt.imread(sp.background_path)
+        
+        #set annotation size
         self.size=20
         
-        #set x,y
+        #set x,y coordination
         self.x_max = 2
         self.x_min = -2
         self.y_max = 1.5
@@ -80,6 +80,7 @@ class Animation():
         
         # For FuncAnimation's sake, we need to return the artist we'll be using
         # Note that it expects a sequence of artists, thus the trailing comma.
+        #return self.scat,self.__annotations__,self.__annotations1__, self.__annotations2__,self.__annotations3__
         return self.scat,
     
 
@@ -87,7 +88,6 @@ class Animation():
         """Generate a random walk (brownian motion). Data is scaled to produce
         a soft "flickering" effect."""
         
-        #s, c = np.random.random((self.numpoints, 2)).T
         while self.temp < len(self.name):
             if self.cur_frame == int(self.data[self.temp,0]):
                 #print(self.temp)
@@ -170,5 +170,5 @@ if __name__ == '__main__':
     #st.write(data)
     name = df["Class Name"].to_numpy()
     anme = Animation(data,name) 
-    plt.show()
+    #plt.show()
 

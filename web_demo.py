@@ -308,7 +308,7 @@ def save_fileinput(file_input):
     file_convert.export(fpath,format='wav')
 
     st.markdown(f"""
-    ### Files
+    ### File was saved to local path: 
     - {fpath}
     """,
     unsafe_allow_html=True) # display file name
@@ -327,10 +327,10 @@ if __name__ == '__main__':
     result = st.container()
     with col1:
         data = st.selectbox(
-            'data type?',
+            'Data Type:',
             ('L3DAS22 Dataset(default)', 'DCASE2022 Dataset', 'Mp4'))
     with col2:
-        file_input = st.file_uploader("Input file")
+        file_input = st.file_uploader("Input File:",type='wav')
 
 
     with result:
