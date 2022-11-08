@@ -26,7 +26,13 @@ class Animation():
         self.fig,self.ax = plt.subplots(figsize=(20,15)) 
         self.background = plt.imread(sp.background_path)
         self.size=20
-
+        
+        #set x,y
+        self.x_max = 2
+        self.x_min = -2
+        self.y_max = 1.5
+        self.y_min = -1.5
+        
         #setup video params
         self.cur_frame =0
         self.max_frames = 300
@@ -56,12 +62,13 @@ class Animation():
         self.ax.set_xlabel('X')
         self.ax.set_ylabel('Y')
         
-        self.ax.imshow(self.background,extent=[-0.6,0.6,-0.5,0.5])
+        self.ax.imshow(self.background,extent=[self.x_min,self.x_max,
+                                               self.y_min,self.y_max])
         self.ax.grid()
         
         #x, y, name, = next(self.stream)
-        self.ax.set_xlim([-0.6,0.6])
-        self.ax.set_ylim([-0.5,0.5])
+        self.ax.set_xlim([self.x_min,self.x_max])
+        self.ax.set_ylim([self.y_min,self.y_max])
         self.ax.scatter(0,0,c='r',s=200)
         self.ax.annotate("Mic",(0,0),size= self.size)
         self.scat = self.ax.scatter([], [], c= "orange",s=200)
