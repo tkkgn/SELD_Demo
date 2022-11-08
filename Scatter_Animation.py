@@ -20,11 +20,12 @@ class Animation():
         self.stream = self.data_stream()
         
         
+        
         # initializing a figure in 
         # which the graph will be plotted
-        self.fig,self.ax = plt.subplots(figsize=(20,10)) 
-
-
+        self.fig,self.ax = plt.subplots(figsize=(20,15)) 
+        self.background = plt.imread(sp.background_path)
+        self.size=20
 
         #setup video params
         self.cur_frame =0
@@ -54,23 +55,25 @@ class Animation():
         
         self.ax.set_xlabel('X')
         self.ax.set_ylabel('Y')
+        
+        self.ax.imshow(self.background,extent=[-0.6,0.6,-0.5,0.5])
         self.ax.grid()
         
         #x, y, name, = next(self.stream)
         self.ax.set_xlim([-0.6,0.6])
         self.ax.set_ylim([-0.5,0.5])
-        self.ax.scatter(0,0,c='r')
-        self.ax.annotate("Mic",(0,0))
-        self.scat = self.ax.scatter([], [], s=200)
-        self.__annotations__= self.ax.annotate("",(0,0))
-        self.__annotations1__= self.ax.annotate("",(0,0))
-        self.__annotations2__= self.ax.annotate("",(0,0))
-        self.__annotations3__= self.ax.annotate("",(0,0))
+        self.ax.scatter(0,0,c='r',s=200)
+        self.ax.annotate("Mic",(0,0),size= self.size)
+        self.scat = self.ax.scatter([], [], c= "orange",s=200)
+        # self.__annotations__= self.ax.annotate("",(0,0),size= self.size)
+        # self.__annotations1__= self.ax.annotate("",(0,0),size= self.size)
+        # self.__annotations2__= self.ax.annotate("",(0,0),size= self.size)
+        # self.__annotations3__= self.ax.annotate("",(0,0),size= self.size)
         
         
         # For FuncAnimation's sake, we need to return the artist we'll be using
         # Note that it expects a sequence of artists, thus the trailing comma.
-        return self.scat,self.__annotations__,self.__annotations1__, self.__annotations2__,self.__annotations3__
+        return self.scat,
     
 
     def data_stream(self):
@@ -117,28 +120,30 @@ class Animation():
         # Set x and y data...
         self.scat.set_offsets(np.column_stack((x,y)))
         
-        if len(name) == 1:
-            self.__annotations__= self.ax.annotate(name[0],(x[0],y[0]))
-            return self.scat,self.__annotations__
+        # if len(name) == 1:
+        #     self.__annotations__= self.ax.annotate(name[0],(x[0],y[0]),size= self.size)
+        #     #return self.scat,self.__annotations__
         
-        if len(name) == 2:
-            self.__annotations__= self.ax.annotate(name[0],(x[0],y[0]))
-            self.__annotations1__= self.ax.annotate(name[1],(x[1],y[1]))
-            return self.scat, self.__annotations__, self.__annotations1__
+        # if len(name) == 2:
+        #     self.__annotations__= self.ax.annotate(name[0],(x[0],y[0]),size= self.size)
+        #     self.__annotations1__= self.ax.annotate(name[1],(x[1],y[1]),size= self.size)
+        #     #return self.scat, self.__annotations__, self.__annotations1__
         
-        if len(name) == 3:
-            self.__annotations__= self.ax.annotate(name[0],(x[0],y[0]))
-            self.__annotations1__= self.ax.annotate(name[1],(x[1],y[1]))
-            self.__annotations2__= self.ax.annotate(name[2],(x[2],y[2]))
-            return self.scat, self.__annotations__, self.__annotations1__, self.__annotations2__
+        # if len(name) == 3:
+        #     self.__annotations__= self.ax.annotate(name[0],(x[0],y[0]),size= self.size)
+        #     self.__annotations1__= self.ax.annotate(name[1],(x[1],y[1]),size= self.size)
+        #     self.__annotations2__= self.ax.annotate(name[2],(x[2],y[2]),size= self.size)
+        #     #return self.scat, self.__annotations__, self.__annotations1__, self.__annotations2__
         
-        if len(name) == 4:
-            self.__annotations__= self.ax.annotate(name[0],(x[0],y[0]))
-            self.__annotations1__= self.ax.annotate(name[1],(x[1],y[1]))
-            self.__annotations2__= self.ax.annotate(name[2],(x[2],y[2]))
-            self.__annotations3__= self.ax.annotate(name[3],(x[3],y[3]))
-            return self.scat,self.__annotations__,self.__annotations1__, self.__annotations2__,self.__annotations3__
+        # if len(name) == 4:
+        #     self.__annotations__= self.ax.annotate(name[0],(x[0],y[0]),size= self.size)
+        #     self.__annotations1__= self.ax.annotate(name[1],(x[1],y[1]),size= self.size)
+        #     self.__annotations2__= self.ax.annotate(name[2],(x[2],y[2]),size= self.size)
+        #     self.__annotations3__= self.ax.annotate(name[3],(x[3],y[3]),size= self.size)
+        #     #return self.scat,self.__annotations__,self.__annotations1__, self.__annotations2__,self.__annotations3__
         
+        for i in range(len(name)):
+            self.annotaion = self.ax.annotate(name[i],(x[i],y[i]),size= self.size)
         
         #self.annotation.new_frame_seq(annotation)
 
@@ -157,8 +162,6 @@ if __name__ == '__main__':
     data = np.column_stack((df["Frames"].to_numpy(),df["X"].to_numpy(),df["Y"].to_numpy()))
     #st.write(data)
     name = df["Class Name"].to_numpy()
-    anme = Animation(data,name)
-     
-    #plt.show()
+    anme = Animation(data,name) 
+    plt.show()
 
-    

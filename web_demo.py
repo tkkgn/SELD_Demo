@@ -132,47 +132,47 @@ def mp4_2_wav(video):
     first_30_seconds = mp4_version[:30 * 1000]
     return first_30_seconds.export(format='wav')
 
-def animation_directive(df):
-        #st.write(len(df))
-    data = np.column_stack((df["Frames"].to_numpy(),df["X"].to_numpy(),df["Y"].to_numpy()))
-    #st.write(data)
-    name = df["Class Name"].to_numpy()
-    #display = Animation(data,name).get_animation()
-    #st.write("done")
+# def animation_directive(df):
+#         #st.write(len(df))
+#     data = np.column_stack((df["Frames"].to_numpy(),df["X"].to_numpy(),df["Y"].to_numpy()))
+#     #st.write(data)
+#     name = df["Class Name"].to_numpy()
+#     #display = Animation(data,name).get_animation()
+#     #st.write("done")
     
-    fig, ax = plt.subplots()
-    ax.set_xlim([-0.5,0.5])
-    ax.set_ylim([-0.5,0.5])
-    ax.grid()
+#     fig, ax = plt.subplots()
+#     ax.set_xlim([-0.5,0.5])
+#     ax.set_ylim([-0.5,0.5])
+#     ax.grid()
     
-    current = 0
-    frame =0
+#     current = 0
+#     frame =0
     
-    for temp in range(len(name)):
-        ax.set_title("the frame number: {}".format(frame))
-        if frame == int(data[temp,0]):
-            continue
-        xtemp=data[current:temp,1]
-        ytemp=data[current:temp,2]
-        nameT = name[current:temp]
-        print(frame,xtemp,ytemp,nameT)
+#     for temp in range(len(name)):
+#         ax.set_title("the frame number: {}".format(frame))
+#         if frame == int(data[temp,0]):
+#             continue
+#         xtemp=data[current:temp,1]
+#         ytemp=data[current:temp,2]
+#         nameT = name[current:temp]
+#         print(frame,xtemp,ytemp,nameT)
         
-        center = ax.scatter(0,0,color = "r")
-        bha= ax.scatter(xtemp,ytemp,s=100)
-        ann_list = []
-        for i in range(len(nameT)):
-            ann_list.append(ax.annotate(nameT[i],(xtemp[i],ytemp[i])))
+#         center = ax.scatter(0,0,color = "r")
+#         bha= ax.scatter(xtemp,ytemp,s=100)
+#         ann_list = []
+#         for i in range(len(nameT)):
+#             ann_list.append(ax.annotate(nameT[i],(xtemp[i],ytemp[i])))
             
-        plt.draw(fig)
-        plt.pause(0.1)
-        bha.remove()
-        for i, a in enumerate(ann_list):
-            a.remove()        
-        current=temp
-        frame +=1
-        if frame == 300:
-            break
-    plt.close() 
+#         plt.draw(fig)
+#         plt.pause(0.1)
+#         bha.remove()
+#         for i, a in enumerate(ann_list):
+#             a.remove()        
+#         current=temp
+#         frame +=1
+#         if frame == 300:
+#             break
+#     plt.close() 
 
 
 
@@ -206,7 +206,7 @@ def animation_with_matplot_FuncAnimation(df,audio_path):
     with st.spinner('Wait for loading animation...'):
         anim = Animation(data,name)
         result_path = merge_animation_to_audiofile(anim.VIDEO_PATH,audio_path)
-    st.success('Done!')
+    st.success('Done processing!')
     
        
     #read video
@@ -277,7 +277,7 @@ def visual_dataframe(np_arr,option):
         6: 'Key Jangling',
         7: 'Knock',
         8: 'Laughter',
-        9: 'Male/woman speaking',
+        9: 'Male/man speaking',
         10: 'Printer',
         11: 'Scissors',
         12: 'Telephone',
@@ -297,8 +297,10 @@ def visual_dataframe(np_arr,option):
     
     df = add_blank_rows(df)
     st.dataframe(df)
+    fname = file_input.name.split(".")
+    #df.to_csv("{}.csv".format(fname[0]))
+    #df.to_csv("test.csv")
     return df
-    #df.to_csv('test.csv')
 
 def save_fileinput(file_input):
     fpath = os.path.join(sp.dir_path,sp.raw_audio)
