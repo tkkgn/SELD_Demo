@@ -5,14 +5,14 @@ import matplotlib.animation as animation
 import pandas as pd
 import os
 import storage_params as sp
-
-
+from timeit import default_timer as timer 
 
 class Animation():
     
     #Enter your own video name .mp4
     VIDEO_PATH = os.path.join(sp.dir_path,sp.anim_file)
     
+  
     def __init__(self,data, name):
         #initializing data
         self.data = data
@@ -41,6 +41,7 @@ class Animation():
         
         #self.title = self.ax.set_title("the frame number: {}".format(self.cur_frame))
         #self.colorbar = plt.colorbar()
+      
         
         #setup FuncAnimation
         self.anni = animation.FuncAnimation(self.fig, 
@@ -53,6 +54,7 @@ class Animation():
         #save animation to file
         writervideo = animation.FFMpegWriter(fps=10)
         self.anni.save(self.VIDEO_PATH,writervideo)
+        plt.close(self.fig)
         
 
     def setup_plot(self):
@@ -71,7 +73,9 @@ class Animation():
         self.ax.set_ylim([self.y_min,self.y_max])
         self.ax.scatter(0,0,c='r',s=200)
         self.ax.annotate("Mic",(0,0),size= self.size)
+        
         self.scat = self.ax.scatter([], [], c= "orange",s=200)
+        
         # self.__annotations__= self.ax.annotate("",(0,0),size= self.size)
         # self.__annotations1__= self.ax.annotate("",(0,0),size= self.size)
         # self.__annotations2__= self.ax.annotate("",(0,0),size= self.size)
@@ -119,7 +123,7 @@ class Animation():
         """Update the scatter plot."""
         x,y,name = next(self.stream)
         self.ax.clear()
-        self.ax.set_title("the frame number: {}".format(f))
+        self.ax.set_title("the frame number: {}".format(f),size = self.size)
         self.setup_plot()
         
         
@@ -169,6 +173,8 @@ if __name__ == '__main__':
     data = np.column_stack((df["Frames"].to_numpy(),df["X"].to_numpy(),df["Y"].to_numpy()))
     #st.write(data)
     name = df["Class Name"].to_numpy()
-    anme = Animation(data,name) 
+    start = timer()
+    anme = Animation(data,name)
+    print("without GPU:", timer()-start)
     #plt.show()
 

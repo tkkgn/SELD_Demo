@@ -98,6 +98,7 @@ def gen_submission_list_task2(sed, doa, max_loc_value=2., num_frames=600, num_cl
     for i, (c, l) in enumerate(zip(sed, doa)):  # iterate all time frames
         c = np.round(c)  # turn to 0/1 the class predictions with threshold 0.5
         l = l * max_loc_value  # turn back locations between -2,2 as in the original dataset
+        l = l * 5 # xyz * threshold 
         l = l.reshape(num_classes, max_overlaps, 3)  # num_class, event number, coordinates
         if np.sum(c) == 0:  # if no sounds are detected in a frame
             pass  # don't append
