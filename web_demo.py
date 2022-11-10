@@ -122,20 +122,20 @@ def mp4_2_wav(video):
 
 def visual_dataframe(np_arr):
     name = {
-        0: 'computer keyboard',
-        1: 'drawer open/close',
-        2: 'cupboard open/close',
-        3: 'finger snapping',
-        4: 'keys jangling',
-        5: 'knock ',
-        6: 'laughter',
-        7: 'scissors',
-        8: 'telephone',
-        9: 'writing',
-        10: 'chink and clink',
-        11: 'printer',
-        12: 'female speech',
-        13: 'male speech'
+        0: 'Chink_and_clink',
+        1: 'Computer keyboard',
+        2: 'Cupboard_open_or_close',
+        3: 'Drawer_open_or_close',
+        4: 'Female_speech_and_woman_speaking',
+        5: 'Finger_snapping',
+        6: 'Keys_jangling',
+        7: 'Knock',
+        8: 'Laughter',
+        9: 'Male_speech_and_man_speaking',
+        10: 'Printer',
+        11: 'Scissors',
+        12: 'Telephone',
+        13: 'Writing'
     }
     df = pd.DataFrame(np_arr, columns=['Frames', 'Class', 'X', 'Y', 'Z'])
     # 1.0000 --> 1
