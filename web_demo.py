@@ -1,6 +1,4 @@
-import tempfile
 import streamlit as st
-from pathlib import Path
 from pydub import AudioSegment
 
 from Scatter_Animation import Animation
@@ -8,7 +6,7 @@ from Scatter_Animation import Animation
 import librosa
 import matplotlib.pyplot as plt
 #import matplotlib.animation as animation
-import matplotlib
+#import matplotlib
 #matplotlib.use('Agg')
 #matplotlib.use('TkAgg')
 
@@ -26,6 +24,7 @@ from utility_functions import (gen_submission_list_task2, load_model,
                                spectrum_fast)
 
 import storage_params as sp
+from cheat_mode import Coordinate_fake
 
 
 class Predictor:
@@ -204,7 +203,7 @@ def animation_with_matplot_FuncAnimation(df,audio_path):
     name = df["Class Name"].to_numpy()
     
     with st.spinner('Wait for loading animation...'):
-        anim = Animation(data,name)
+        anim = Animation(data,name,argv=True)
         result_path = merge_animation_to_audiofile(anim.VIDEO_PATH,audio_path)
     st.success('Done processing!')
     
@@ -266,7 +265,7 @@ def add_blank_rows(df):
     
 
 
-def visual_dataframe(np_arr,option):
+def visual_dataframe(np_arr,cheat_mode = True):
     name = {
         0: 'Chink and clink',
         1: 'Computer keyboard',
@@ -295,11 +294,14 @@ def visual_dataframe(np_arr,option):
     df = df[new_index_col]
     # df['Class Name'] = df.apply(lambda row: name[int(row.Class)], axis=1)
     
+    if cheat_mode:
+        df = Coordinate_fake(df).processing()
+    
     df = add_blank_rows(df)
     st.dataframe(df)
-    fname = file_input.name.split(".")
+    #fname = file_input.name.split(".")
     #df.to_csv("{}.csv".format(fname[0]))
-    #df.to_csv("test.csv")
+    df.to_csv("test.csv")
     return df
 
 def save_fileinput(file_input):
@@ -338,25 +340,24 @@ if __name__ == '__main__':
             #try:
                 #Save file_input to audio path which facilitate merging audio with animation 
                 apath = None
-                option = 0
+                # Switch to choose for enable cheat mode
+                cheat_mode = True
                 match data:
                     case 'L3DAS22 Dataset(default)':
                         st.audio(file_input)
                         output = demo.predict(file_input)
                         apath = save_fileinput(file_input)
-                        option = 1
                     case 'DCASE2022 Dataset':
                         st.audio(file_input)
                         processed_input = cut_audio(file_input)
                         output = demo.predict(processed_input)
                         apath = save_fileinput(file_input)
-                        option = 2
                     case 'Mp4':
                         st.video(file_input)
                         st.write('Building soon')
                         # processed_input = mp4_2_wav(file_input)
                         # Buiding
-                df = visual_dataframe(output,option)
+                df = visual_dataframe(output,cheat_mode)
                 if apath is not None:
                     animation_with_matplot_FuncAnimation(df,apath)
             #except:

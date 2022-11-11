@@ -70,8 +70,12 @@ def spectrum_fast(x, nperseg=512, noverlap=128, window='hamming', cut_dc=True,
                           nperseg=nperseg,
                           noverlap=noverlap)
 
-    # seg_stft = librosa.stft(x, n_fft=nparseg, hop_length=noverlap)
+    # seg_stft = []
 
+    # for channel in range(x.shape[0]):
+    #     seg_stft.append(librosa.stft(x[channel], n_fft=nperseg, hop_length=noverlap))
+    # seg_stft = np.array(seg_stft)
+    
     output = np.abs(seg_stft)
 
     if output_phase:
