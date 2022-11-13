@@ -10,6 +10,7 @@ from timeit import default_timer as timer
 import subprocess
 
 from matplotlib.animation import FFMpegWriter
+import streamlit as st
 
 #Enter your own video name .mp4
 VIDEO_PATH = os.path.join(sp.dir_path,sp.anim_file)
@@ -57,7 +58,7 @@ class Animation():
     
     VIDEO_PATH = VIDEO_PATH   
   
-    def __init__(self,data, name, argv = False):
+    def __init__(self, data, name, argv = False, op = False):
         
            
         self.save_video = argv
@@ -92,25 +93,26 @@ class Animation():
         
         #self.title = self.ax.set_title("the frame number: {}".format(self.cur_frame))
         #self.colorbar = plt.colorbar()
-      
-        #self.test_using_canvas()
+        
+        if op:      
+            self.test_using_canvas()
         #setup FuncAnimation
-
-        self.anni = animation.FuncAnimation(self.fig, 
-                                            self.update, 
-                                            frames = self.max_frames, 
-                                            interval = 100, 
-                                            init_func= self.setup_plot, 
-                                            blit = True)
-        if self.save_video:
-            #save animation to file
-            #writervideo = FasterFFMpegWriter(fps=10,fig = self.fig)
-            writervideo = animation.FFMpegWriter(fps=10)
-            self.anni.save(VIDEO_PATH,writervideo)
-            plt.close()
-        else:
-            plt.show(block = True)
-            plt.close()    
+        else: 
+            self.anni = animation.FuncAnimation(self.fig, 
+                                                self.update, 
+                                                frames = self.max_frames, 
+                                                interval = 100, 
+                                                init_func= self.setup_plot, 
+                                                blit = True)
+            if self.save_video:
+                #save animation to file
+                #writervideo = FasterFFMpegWriter(fps=10,fig = self.fig)
+                writervideo = animation.FFMpegWriter(fps=10)
+                self.anni.save(VIDEO_PATH,writervideo)
+                plt.close()
+            else:
+                plt.show(block = True)
+                plt.close()    
             
     def test_using_canvas(self):
         self.setup_plot()
@@ -180,7 +182,7 @@ class Animation():
     def data_stream(self):
         """Generate a random walk (brownian motion). Data is scaled to produce
         a soft "flickering" effect."""
-        
+        my_bar = st.progress(0)
         while self.temp < len(self.name):
             if self.cur_frame == int(self.data[self.temp,0]):
                 #print(self.temp)
@@ -189,7 +191,8 @@ class Animation():
             xtemp=self.data[self.current:self.temp,1]
             ytemp=self.data[self.current:self.temp,2]
             nameT = self.name[self.current:self.temp]
-            print(self.cur_frame,xtemp,ytemp,nameT)
+            #print(self.cur_frame,xtemp,ytemp,nameT)
+            my_bar.progress(self.cur_frame/self.max_frames)
             self.current=self.temp
             self.cur_frame += 1
 

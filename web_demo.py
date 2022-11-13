@@ -199,14 +199,14 @@ def merge_animation_to_audiofile(anim_path,audio_path):
     #videoclip.ipython_display()
 
 
-def animation_with_matplot_FuncAnimation(df,audio_path):
+def animation_with_matplot_FuncAnimation(df,audio_path,op):
     #convert dataframe to numpy for plotting animation
     data = np.column_stack((df["Frames"].to_numpy(),df["X"].to_numpy(),df["Y"].to_numpy()))
     name = df["Class Name"].to_numpy()
     
     with st.spinner('Wait for loading animation...'):
         start = timer()
-        anim = Animation(data,name,argv=True)
+        anim = Animation(data, name, argv=True , op=op)
         print("Animation processing time:", timer()-start)
         result_path = merge_animation_to_audiofile(anim.VIDEO_PATH,audio_path)
         
@@ -331,22 +331,16 @@ if __name__ == '__main__':
     demo.setup()
     # process
     col1, col2 = st.columns(2)
-    option = st.container()
     result = st.container()
     with col1:
         data = st.selectbox(
             'Data Type:',
             ('L3DAS22 Dataset(default)', 'DCASE2022 Dataset', 'Mp4'))
+        op = st.checkbox("Faster animation render?")
+        if op:
+            st.warning("The animation quality will be reduced, but your rending process will be faster.")
     with col2:
         file_input = st.file_uploader("Input File:",type='wav')
-
-    with option:
-        op = st.selectbox(
-        "How would you like animation to render?",
-        ("Fast","Quality"),
-        )
-        st.write('You selected:', op)
-        
         
     
     with result:
@@ -373,6 +367,6 @@ if __name__ == '__main__':
                         # Buiding
                 df = visual_dataframe(output,cheat_mode)
                 if apath is not None:
-                    animation_with_matplot_FuncAnimation(df,apath)
+                    animation_with_matplot_FuncAnimation(df,apath,op)
             #except:
             #    st.write('check input')
