@@ -7,15 +7,59 @@ import os
 import storage_params as sp
 import sys
 from timeit import default_timer as timer 
+import subprocess
+
+from matplotlib.animation import FFMpegWriter
+
+#Enter your own video name .mp4
+VIDEO_PATH = os.path.join(sp.dir_path,sp.anim_file)
+
+class FasterFFMpegWriter(FFMpegWriter):
+    '''FFMpeg-pipe writer bypassing figure.savefig.'''
+    def __init__(self, **kwargs):
+        '''Initialize the Writer object and sets the default frame_format.'''
+        super().__init__(**kwargs)
+        self.frame_format = 'argb'
+        self.canvas_width, self.canvas_height = self.fig.canvas.get_width_height()
+        # Open an ffmpeg process
+        outf = VIDEO_PATH
+        cmdstring = ('ffmpeg', 
+                    '-y', '-r', '10', # overwrite, 1fps
+                    '-s', '%dx%d' % (self.canvas_width, self.canvas_height), # size of image string
+                    '-pix_fmt', 'argb', # format
+                    '-f', 'rawvideo',  '-i', '-', # tell ffmpeg to expect raw video from the pipe
+                    '-vcodec', 'mpeg4', outf) # output encoding
+        self._proc = subprocess.Popen(cmdstring, stdin=subprocess.PIPE)
+    
+
+    def grab_frame(self, **savefig_kwargs):
+        '''Grab the image information from the figure and save as a movie frame.
+
+        Doesn't use savefig to be faster: savefig_kwargs will be ignored.
+        '''
+        try:
+            # re-adjust the figure size and dpi in case it has been changed by the
+            # user.  We must ensure that every frame is the same size or
+            # the movie will not save correctly.
+            self.fig.set_size_inches(self.canvas_width, self.canvas_height)
+            #self.fig.set_dpi(self.dpi)
+            # Draw and save the frame as an argb string to the pipe sink
+            self.fig.canvas.draw()
+            self._proc.stdin.write(self.fig.canvas.tostring_argb()) 
+        except (RuntimeError, IOError) as e:
+            out, err = self._proc.communicate()
+            raise IOError('Error saving animation to file (cause: {0}) '
+                      'Stdout: {1} StdError: {2}. It may help to re-run '
+                      'with --verbose-debug.'.format(e, out, err)) 
+
 
 class Animation():
     
-    #Enter your own video name .mp4
-    VIDEO_PATH = os.path.join(sp.dir_path,sp.anim_file)
-    
+    VIDEO_PATH = VIDEO_PATH   
   
     def __init__(self,data, name, argv = False):
         
+           
         self.save_video = argv
         
         #initializing data
@@ -27,6 +71,9 @@ class Animation():
         # which the graph will be plotted
         self.fig,self.ax = plt.subplots(figsize=(9,7)) 
         self.background = plt.imread(sp.background_path)
+        
+        #fast combining
+        self.canvas_width, self.canvas_height = self.fig.canvas.get_width_height()
         
         #set annotation size
         self.text_size=10
@@ -46,8 +93,9 @@ class Animation():
         #self.title = self.ax.set_title("the frame number: {}".format(self.cur_frame))
         #self.colorbar = plt.colorbar()
       
-        
+        #self.test_using_canvas()
         #setup FuncAnimation
+
         self.anni = animation.FuncAnimation(self.fig, 
                                             self.update, 
                                             frames = self.max_frames, 
@@ -56,12 +104,42 @@ class Animation():
                                             blit = True)
         if self.save_video:
             #save animation to file
+            #writervideo = FasterFFMpegWriter(fps=10,fig = self.fig)
             writervideo = animation.FFMpegWriter(fps=10)
-            self.anni.save(self.VIDEO_PATH,writervideo)
+            self.anni.save(VIDEO_PATH,writervideo)
             plt.close()
         else:
             plt.show(block = True)
             plt.close()    
+            
+    def test_using_canvas(self):
+        self.setup_plot()
+        
+        # Open an ffmpeg process
+        outf = VIDEO_PATH
+        cmdstring = ('ffmpeg', 
+                    '-y', '-r', '10', # overwrite, 1fps
+                    '-s', '%dx%d' % (self.canvas_width, self.canvas_height), # size of image string
+                    '-pix_fmt', 'argb', # format
+                    '-f', 'rawvideo',  '-i', '-', # tell ffmpeg to expect raw video from the pipe
+                    '-vcodec', 'mpeg4', outf) # output encoding
+        p = subprocess.Popen(cmdstring, stdin=subprocess.PIPE)
+
+        # Draw frames and write to the pipe
+        for frame in range(self.max_frames):
+            # draw the frame
+            self.update(frame)
+            self.fig.canvas.draw()
+
+            # extract the image as an ARGB string
+            string = self.fig.canvas.tostring_argb()
+
+            # write to pipe
+            p.stdin.write(string)
+
+        # Finish up
+        p.communicate()
+        
         
 
     def setup_plot(self):
@@ -183,9 +261,9 @@ def main(argv):
     data = np.column_stack((df["Frames"].to_numpy(),df["X"].to_numpy(),df["Y"].to_numpy()))
     #st.write(data)
     name = df["Class Name"].to_numpy()
-    # start = timer()
+    start = timer()
     anme = Animation(data,name,option)
-    # print("without GPU:", timer()-start)
+    print("without GPU:", timer()-start)
     
 
 #test fi

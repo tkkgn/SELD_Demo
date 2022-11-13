@@ -25,7 +25,9 @@ from utility_functions import (gen_submission_list_task2, load_model,
 
 import storage_params as sp
 from cheat_mode import Coordinate_fake
+from timeit import default_timer as timer 
 
+#from multiprocessing import Process
 
 class Predictor:
     def setup(self):
@@ -203,8 +205,11 @@ def animation_with_matplot_FuncAnimation(df,audio_path):
     name = df["Class Name"].to_numpy()
     
     with st.spinner('Wait for loading animation...'):
+        start = timer()
         anim = Animation(data,name,argv=True)
+        print("Animation processing time:", timer()-start)
         result_path = merge_animation_to_audiofile(anim.VIDEO_PATH,audio_path)
+        
     st.success('Done processing!')
     
        
@@ -326,6 +331,7 @@ if __name__ == '__main__':
     demo.setup()
     # process
     col1, col2 = st.columns(2)
+    option = st.container()
     result = st.container()
     with col1:
         data = st.selectbox(
@@ -334,7 +340,15 @@ if __name__ == '__main__':
     with col2:
         file_input = st.file_uploader("Input File:",type='wav')
 
-
+    with option:
+        op = st.selectbox(
+        "How would you like animation to render?",
+        ("Fast","Quality"),
+        )
+        st.write('You selected:', op)
+        
+        
+    
     with result:
         if file_input is not None:
             #try:

@@ -47,6 +47,7 @@ class Coordinate_fake():
     
     def processing(self):
         temp = (0,0)
+        i=0
         for i in range(len(self.df)-1):
             if self.df['Class Name'][i] == "Computer keyboard":
                 x,y = self.get_closet_distance(self.df['X'][i],self.df['Y'][i])
@@ -74,14 +75,20 @@ class Coordinate_fake():
                 
                 
         #check last index
+        if self.df['Class Name'][i] == "Computer keyboard":
+            x,y = self.get_closet_distance(self.df['X'][i],self.df['Y'][i])
+            self.df.at[i,'X'],self.df.at[i,'Y'] = self.random_inrange(x,y)
+            return (self.df)
+            
+        
         if self.df['Class Name'][i] in self.fixed_location.keys():
             x,y = self.fixed_location.get(self.df['Class Name'][i])
             self.df.at[i,'X'],self.df.at[i,'Y'] = self.random_inrange(x,y)
             #self.detect = True
             
-            
-            
-        return self.df
+        return self.df    
+        
+        
                 
             
 if __name__ == '__main__':
